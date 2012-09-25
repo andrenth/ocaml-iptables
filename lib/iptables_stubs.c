@@ -33,7 +33,7 @@ iptables_error(const char *err)
 }
 
 CAMLprim value
-caml_iptables_is_chain(value ml_chain, value ml_handle)
+caml_iptables_is_chain(value ml_handle, value ml_chain)
 {
     CAMLparam2(ml_chain, ml_handle);
     char *c = String_val(ml_chain);
@@ -97,7 +97,7 @@ caml_iptables_next_chain(value ml_handle)
 }
 
 CAMLprim value
-caml_iptables_first_rule(value ml_chain, value ml_handle)
+caml_iptables_first_rule(value ml_handle, value ml_chain)
 {
     CAMLparam2(ml_chain, ml_handle);
     struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
@@ -107,7 +107,7 @@ caml_iptables_first_rule(value ml_chain, value ml_handle)
 }
 
 CAMLprim value
-caml_iptables_next_rule(value ml_prev, value ml_handle)
+caml_iptables_next_rule(value ml_handle, value ml_prev)
 {
     CAMLparam2(ml_prev, ml_handle);
     struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
@@ -117,7 +117,7 @@ caml_iptables_next_rule(value ml_prev, value ml_handle)
 }
 
 CAMLprim value
-caml_iptables_get_target(value ml_entry, value ml_handle)
+caml_iptables_get_target(value ml_handle, value ml_entry)
 {
     CAMLparam2(ml_entry, ml_handle);
     struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
@@ -126,7 +126,7 @@ caml_iptables_get_target(value ml_entry, value ml_handle)
 }
 
 CAMLprim value
-caml_iptables_builtin(value ml_chain, value ml_handle)
+caml_iptables_builtin(value ml_handle, value ml_chain)
 {
     CAMLparam2(ml_chain, ml_handle);
     struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
@@ -135,7 +135,7 @@ caml_iptables_builtin(value ml_chain, value ml_handle)
 }
 
 CAMLprim value
-caml_iptables_get_policy(value ml_chain, value ml_handle)
+caml_iptables_get_policy(value ml_handle, value ml_chain)
 {
     CAMLparam2(ml_chain, ml_handle);
     struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
@@ -149,8 +149,8 @@ caml_iptables_get_policy(value ml_chain, value ml_handle)
 }
 
 CAMLprim value
-caml_iptables_insert_entry(value ml_chain, value ml_entry, value ml_num,
-                           value ml_handle)
+caml_iptables_insert_entry(value ml_handle, value ml_chain, value ml_entry,
+                           value ml_num)
 {
     CAMLparam4(ml_chain, ml_entry, ml_num, ml_handle);
     struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
@@ -165,8 +165,8 @@ caml_iptables_insert_entry(value ml_chain, value ml_entry, value ml_num,
 }
 
 CAMLprim value
-caml_iptables_replace_entry(value ml_chain, value ml_entry, value ml_num,
-                            value ml_handle)
+caml_iptables_replace_entry(value ml_handle, value ml_chain, value ml_entry,
+                            value ml_num)
 {
     CAMLparam4(ml_chain, ml_entry, ml_num, ml_handle);
     struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
@@ -181,7 +181,7 @@ caml_iptables_replace_entry(value ml_chain, value ml_entry, value ml_num,
 }
 
 CAMLprim value
-caml_iptables_append_entry(value ml_chain, value ml_entry, value ml_handle)
+caml_iptables_append_entry(value ml_handle, value ml_chain, value ml_entry)
 {
     CAMLparam3(ml_chain, ml_entry, ml_handle);
     struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
@@ -200,8 +200,7 @@ caml_iptables_append_entry(value ml_chain, value ml_entry, value ml_handle)
      XT_ALIGN(sizeof(struct ipt_entry_target)))
 
 CAMLprim value
-caml_iptables_check_entry(value ml_chain, value ml_origfw,
-                          value ml_handle)
+caml_iptables_check_entry(value ml_handle, value ml_chain, value ml_origfw)
 {
     CAMLparam3(ml_chain, ml_origfw, ml_handle);
     struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
@@ -215,7 +214,7 @@ caml_iptables_check_entry(value ml_chain, value ml_origfw,
 }
 
 CAMLprim value
-caml_iptables_delete_entry(value ml_chain, value ml_origfw, value ml_handle)
+caml_iptables_delete_entry(value ml_handle, value ml_chain, value ml_origfw)
 {
     CAMLparam3(ml_chain, ml_origfw, ml_handle);
     struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
@@ -231,7 +230,7 @@ caml_iptables_delete_entry(value ml_chain, value ml_origfw, value ml_handle)
 }
 
 CAMLprim value
-caml_iptables_delete_num_entry(value ml_chain, value ml_num, value ml_handle)
+caml_iptables_delete_num_entry(value ml_handle, value ml_chain, value ml_num)
 {
     CAMLparam3(ml_chain, ml_num, ml_handle);
     struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
@@ -245,7 +244,7 @@ caml_iptables_delete_num_entry(value ml_chain, value ml_num, value ml_handle)
 }
 
 CAMLprim value
-caml_iptables_check_packet(value ml_chain, value ml_entry, value ml_handle)
+caml_iptables_check_packet(value ml_handle, value ml_chain, value ml_entry)
 {
     CAMLparam3(ml_chain, ml_entry, ml_handle);
     struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
@@ -260,7 +259,7 @@ caml_iptables_check_packet(value ml_chain, value ml_entry, value ml_handle)
 }
 
 CAMLprim value
-caml_iptables_flush_entries(value ml_chain, value ml_handle)
+caml_iptables_flush_entries(value ml_handle, value ml_chain)
 {
     CAMLparam2(ml_chain, ml_handle);
     struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
@@ -273,7 +272,7 @@ caml_iptables_flush_entries(value ml_chain, value ml_handle)
 }
 
 CAMLprim value
-caml_iptables_zero_entries(value ml_chain, value ml_handle)
+caml_iptables_zero_entries(value ml_handle, value ml_chain)
 {
     CAMLparam2(ml_chain, ml_handle);
     struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
@@ -286,7 +285,7 @@ caml_iptables_zero_entries(value ml_chain, value ml_handle)
 }
 
 CAMLprim value
-caml_iptables_create_chain(value ml_chain, value ml_handle)
+caml_iptables_create_chain(value ml_handle, value ml_chain)
 {
     CAMLparam2(ml_chain, ml_handle);
     struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
@@ -299,7 +298,7 @@ caml_iptables_create_chain(value ml_chain, value ml_handle)
 }
 
 CAMLprim value
-caml_iptables_delete_chain(value ml_chain, value ml_handle)
+caml_iptables_delete_chain(value ml_handle, value ml_chain)
 {
     CAMLparam2(ml_chain, ml_handle);
     struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
@@ -312,7 +311,7 @@ caml_iptables_delete_chain(value ml_chain, value ml_handle)
 }
 
 CAMLprim value
-caml_iptables_rename_chain(value ml_oldname, value ml_newname, value ml_handle)
+caml_iptables_rename_chain(value ml_handle, value ml_oldname, value ml_newname)
 {
     CAMLparam3(ml_oldname, ml_newname, ml_handle);
     struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
@@ -326,7 +325,7 @@ caml_iptables_rename_chain(value ml_oldname, value ml_newname, value ml_handle)
 }
 
 CAMLprim value
-caml_iptables_set_policy(value ml_chain, value ml_policy, value ml_handle)
+caml_iptables_set_policy(value ml_handle, value ml_chain, value ml_policy)
 {
     CAMLparam3(ml_chain, ml_policy, ml_handle);
     struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
@@ -341,7 +340,7 @@ caml_iptables_set_policy(value ml_chain, value ml_policy, value ml_handle)
 }
 
 CAMLprim value
-caml_iptables_get_references(value ml_chain, value ml_handle)
+caml_iptables_get_references(value ml_handle, value ml_chain)
 {
     CAMLparam2(ml_chain, ml_handle);
     struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
@@ -355,7 +354,7 @@ caml_iptables_get_references(value ml_chain, value ml_handle)
 }
 
 CAMLprim value
-caml_iptables_read_counter(value ml_chain, value ml_num, value ml_handle)
+caml_iptables_read_counter(value ml_handle, value ml_chain, value ml_num)
 {
     CAMLparam3(ml_chain, ml_num, ml_handle);
     struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
@@ -371,7 +370,7 @@ caml_iptables_read_counter(value ml_chain, value ml_num, value ml_handle)
 }
 
 CAMLprim value
-caml_iptables_zero_counter(value ml_chain, value ml_num, value ml_handle)
+caml_iptables_zero_counter(value ml_handle, value ml_chain, value ml_num)
 {
     CAMLparam3(ml_chain, ml_num, ml_handle);
     struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
@@ -385,8 +384,8 @@ caml_iptables_zero_counter(value ml_chain, value ml_num, value ml_handle)
 }
 
 CAMLprim value
-caml_iptables_set_counter(value ml_chain, value ml_num, value ml_counters,
-                          value ml_handle)
+caml_iptables_set_counter(value ml_handle, value ml_chain, value ml_num,
+                          value ml_counters)
 {
     CAMLparam4(ml_chain, ml_num, ml_counters, ml_handle);
     struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
