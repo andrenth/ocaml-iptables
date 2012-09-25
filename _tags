@@ -1,0 +1,26 @@
+# OASIS_START
+# DO NOT EDIT (digest: b076809950c1a7820421d8c4d6f2a668)
+# Ignore VCS directories, you can use the same kind of rule outside 
+# OASIS_START/STOP if you want to exclude directories that contains 
+# useless stuff for the build process
+<**/.svn>: -traverse
+<**/.svn>: not_hygienic
+".bzr": -traverse
+".bzr": not_hygienic
+".hg": -traverse
+".hg": not_hygienic
+".git": -traverse
+".git": not_hygienic
+"_darcs": -traverse
+"_darcs": not_hygienic
+# Library iptables
+"lib/iptables.cmxs": use_iptables
+<lib/*.ml{,i}>: oasis_library_iptables_ccopt
+"lib/iptables_stubs.c": oasis_library_iptables_ccopt
+<lib/iptables.{cma,cmxa}>: oasis_library_iptables_cclib
+"lib/libiptables_stubs.lib": oasis_library_iptables_cclib
+"lib/dlliptables_stubs.dll": oasis_library_iptables_cclib
+"lib/libiptables_stubs.a": oasis_library_iptables_cclib
+"lib/dlliptables_stubs.so": oasis_library_iptables_cclib
+<lib/iptables.{cma,cmxa}>: use_libiptables_stubs
+# OASIS_STOP

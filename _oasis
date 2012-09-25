@@ -1,0 +1,25 @@
+OASISFormat: 0.3
+Name:        iptables
+Version:     1.0.0
+Synopsis:    OCaml libiptc bindings
+Authors:     Andre Nathan
+License:     MIT
+
+BuildTools:  ocamlbuild
+Plugins:     META (0.3)
+
+Library "iptables"
+  Path:            lib
+  BuildTools:      ocamlbuild
+  CompiledObject:  best
+  Modules:         Iptables
+  CSources:        iptables_stubs.c
+  CCLib:           -liptc
+  CCOpt:           -Wall -Werror
+
+Document "iptables"
+  Title:                Iptables documentation
+  Type:                 ocamlbuild (0.3)
+  BuildTools+:          ocamldoc
+  XOCamlbuildPath:      lib
+  XOCamlbuildLibraries: iptables
