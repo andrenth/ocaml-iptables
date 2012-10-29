@@ -39,7 +39,7 @@ exception Iptables_error of string
 let _ =
   Callback.register_exception "Iptables.Iptables_error" (Iptables_error "")
 
-external init : t -> string = "caml_iptables_init"
+external init : string -> t = "caml_iptables_init"
 external is_chain : t -> string -> bool = "caml_iptables_is_chain"
 external first_chain : t -> string option = "caml_iptables_first_chain"
 external next_chain : t -> string option = "caml_iptables_next_chain"
