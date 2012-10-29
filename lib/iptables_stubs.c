@@ -32,6 +32,39 @@ iptables_error(const char *err)
     caml_raise_with_string(*caml_named_value("Iptables.Iptables_error"), err);
 }
 
+static CAMLprim value
+Val_counters(struct ipt_counters *icp)
+{
+    CAMLparam0();
+    CAMLlocal1(res);
+    int64_t pcnt_hi, pcnt_lo;
+    int64_t bcnt_hi, bcnt_lo;
+    pcnt_hi = icp->pcnt >> 32;
+    pcnt_lo = icp->pcnt & 0xffffffff;
+    bcnt_hi = icp->pcnt >> 32;
+    bcnt_lo = icp->pcnt & 0xffffffff;
+    Store_field(res, 0, copy_int64(pcnt_hi));
+    Store_field(res, 1, copy_int64(pcnt_lo));
+    Store_field(res, 2, copy_int64(bcnt_hi));
+    Store_field(res, 3, copy_int64(bcnt_lo));
+    CAMLreturn(res);
+}
+
+static void
+Counters_val(struct ipt_counters *icp, value ml_counters)
+{
+    int64_t pcnt_hi, pcnt_lo;
+    int64_t bcnt_hi, bcnt_lo;
+
+    pcnt_hi = Int64_val(Field(ml_counters, 0));
+    pcnt_lo = Int64_val(Field(ml_counters, 1));
+    bcnt_hi = Int64_val(Field(ml_counters, 2));
+    bcnt_lo = Int64_val(Field(ml_counters, 3));
+
+    icp->pcnt = ((uint64_t)pcnt_hi << 32) + (uint64_t)pcnt_lo;
+    icp->bcnt = ((uint64_t)bcnt_hi << 32) + (uint64_t)bcnt_lo;
+}
+
 CAMLprim value
 caml_iptables_is_chain(value ml_handle, value ml_chain)
 {
@@ -146,6 +179,25 @@ caml_iptables_get_policy(value ml_handle, value ml_chain)
     policy = iptc_get_policy(c, &ic, h);
 
     CAMLreturn(policy != NULL ? Val_some(caml_copy_string(policy)) : Val_none);
+}
+
+CAMLprim value
+caml_iptables_get_policy_and_counters(value ml_handle, value ml_chain)
+{
+    CAMLparam2(ml_chain, ml_handle);
+    CAMLlocal1(res);
+    struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
+    char *c = String_val(ml_chain);
+    const char *policy;
+    struct ipt_counters ic;
+
+    policy = iptc_get_policy(c, &ic, h);
+
+    res = caml_alloc(2, 0);
+    Store_field(res, 0, caml_copy_string(policy));
+    Store_field(res, 1, Val_counters(&ic));
+
+    CAMLreturn(policy != NULL ? Val_some(res) : Val_none);
 }
 
 CAMLprim value
@@ -331,7 +383,24 @@ caml_iptables_set_policy(value ml_handle, value ml_chain, value ml_policy)
     struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
     char *c = String_val(ml_chain);
     char *p = String_val(ml_policy);
+
+    if (iptc_set_policy(c, p, NULL, h) == 0)
+        iptables_error(iptc_strerror(errno));
+
+    CAMLreturn(Val_unit);
+}
+
+CAMLprim value
+caml_iptables_set_policy_and_counters(value ml_handle, value ml_chain,
+                                      value ml_policy, value ml_counters)
+{
+    CAMLparam3(ml_chain, ml_policy, ml_handle);
+    struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
+    char *c = String_val(ml_chain);
+    char *p = String_val(ml_policy);
     struct ipt_counters ic;
+
+    Counters_val(&ic, ml_counters);
 
     if (iptc_set_policy(c, p, &ic, h) == 0)
         iptables_error(iptc_strerror(errno));
@@ -366,7 +435,7 @@ caml_iptables_read_counter(value ml_handle, value ml_chain, value ml_num)
     if (icp == NULL)
         iptables_error(iptc_strerror(errno));
 
-    CAMLreturn((value)icp);
+    CAMLreturn(Val_counters(icp));
 }
 
 CAMLprim value
@@ -391,9 +460,11 @@ caml_iptables_set_counter(value ml_handle, value ml_chain, value ml_num,
     struct iptc_handle *h = (struct iptc_handle *)Data_custom_val(ml_handle);
     char *c = String_val(ml_chain);
     unsigned int n = Int_val(ml_num);
-    struct ipt_counters *icp = (struct ipt_counters *)ml_counters;
+    struct ipt_counters ic;
 
-    if (iptc_set_counter(c, n, icp, h) == 0)
+    Counters_val(&ic, ml_counters);
+
+    if (iptc_set_counter(c, n, &ic, h) == 0)
         iptables_error(iptc_strerror(errno));
 
     CAMLreturn(Val_unit);

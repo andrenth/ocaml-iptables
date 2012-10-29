@@ -11,6 +11,7 @@ Plugins:     META (0.3)
 Library "iptables"
   Path:            lib
   BuildTools:      ocamlbuild
+  BuildDepends:    uint.uint64 (>= 1.0.1)
   CompiledObject:  best
   Modules:         Iptables
   CSources:        iptables_stubs.c

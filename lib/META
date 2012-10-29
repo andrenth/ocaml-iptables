@@ -1,7 +1,8 @@
 # OASIS_START
-# DO NOT EDIT (digest: 8392c5c60c6ca3272349952886988e60)
+# DO NOT EDIT (digest: 14641416779c81fee62d667eef6cdf7d)
 version = "1.0.0"
 description = "OCaml libiptc bindings"
+requires = "uint.uint64"
 archive(byte) = "iptables.cma"
 archive(byte, plugin) = "iptables.cma"
 archive(native) = "iptables.cmxa"
