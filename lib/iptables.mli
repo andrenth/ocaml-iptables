@@ -11,6 +11,7 @@ type counters =
 exception Iptables_error of string
 
 external init : string -> t = "caml_iptables_init"
+external free : string -> t = "caml_iptables_free"
 external is_chain : t -> string -> bool = "caml_iptables_is_chain"
 external first_chain : t -> string option = "caml_iptables_first_chain"
 external next_chain : t -> string option = "caml_iptables_next_chain"
@@ -34,8 +35,8 @@ external delete_entry : t -> string -> entry -> unit
   = "caml_iptables_delete_entry"
 external delete_entry_by_number : t -> string -> int -> unit
   = "caml_iptables_delete_num_entry"
-external check_packet : t -> string -> entry -> string
-  = "caml_iptables_check_packet"
+(*external check_packet : t -> string -> entry -> string
+  = "caml_iptables_check_packet"*)
 external flush_entries : t -> string -> unit = "caml_iptables_flush_entries"
 external zero_entries : t -> string -> unit = "caml_iptables_zero_entries"
 external create_chain : t -> string -> unit = "caml_iptables_create_chain"
@@ -49,8 +50,8 @@ external get_references : t -> string -> int = "caml_iptables_get_references"
 external zero_counters : t -> string -> int -> unit
   = "caml_iptables_zero_counter"
 external commit : t -> unit = "caml_iptables_commit"
-external raw_socket : unit -> Unix.file_descr
-  = "caml_iptables_get_raw_socket"
+(* external raw_socket : unit -> Unix.file_descr
+  = "caml_iptables_get_raw_socket" *)
 external dump_entries : t -> unit = "caml_iptables_dump_entries"
 
 val read_counters : t -> string -> int -> counters
