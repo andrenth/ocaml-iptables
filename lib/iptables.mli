@@ -1,7 +1,6 @@
 type t
 
 type entry
-type chain_label
 
 type counters =
   { pcnt : Uint64.t
@@ -21,7 +20,8 @@ external get_target : t -> entry -> string = "caml_iptables_get_target"
 external is_builtin : t -> string -> bool = "caml_iptables_builtin"
 
 external get_policy : t -> string -> string option = "caml_iptables_get_policy"
-val get_policy_and_counters : t -> string -> (string * counters) option
+external get_policy_and_counters : t -> string -> (string * counters) option
+  = "caml_iptables_get_policy_and_counters"
 
 external insert_entry : t -> string -> entry -> int -> unit
   = "caml_iptables_insert_entry"
@@ -44,7 +44,8 @@ external rename_chain : t -> string -> string -> unit
   = "caml_iptables_rename_chain"
 
 external set_policy : t -> string -> string -> unit = "caml_iptables_set_policy"
-val set_policy_and_counters : t -> string -> string -> counters -> unit
+external set_policy_and_counters : t -> string -> string -> counters -> unit
+  = "caml_iptables_set_policy_and_counters"
 
 external get_references : t -> string -> int = "caml_iptables_get_references"
 external zero_counters : t -> string -> int -> unit
@@ -54,5 +55,10 @@ external commit : t -> unit = "caml_iptables_commit"
   = "caml_iptables_get_raw_socket" *)
 external dump_entries : t -> unit = "caml_iptables_dump_entries"
 
-val read_counters : t -> string -> int -> counters
-val set_counters : t -> string -> int -> counters -> unit
+external read_counters : t -> string -> int -> counters
+  = "caml_iptables_read_counter"
+external set_counters : t -> string -> int -> counters -> unit
+  = "caml_iptables_set_counter"
+
+val iter_chains : (string -> unit) -> t -> unit
+val iter_rules : (entry -> unit) -> string -> t -> unit
