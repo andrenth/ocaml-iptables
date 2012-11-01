@@ -362,23 +362,6 @@ caml_iptables_delete_num_entry(value ml_handle, value ml_chain, value ml_num)
     CAMLreturn(Val_unit);
 }
 
-//CAMLprim value
-//caml_iptables_check_packet(value ml_handle, value ml_chain, value ml_entry)
-//{
-//    CAMLparam3(ml_chain, ml_entry, ml_handle);
-//    struct iptc_handle *h = (struct iptc_handle *)ml_handle;
-//    char *c = String_val(ml_chain);
-//    struct ipt_entry *e = (struct ipt_entry *)Data_custom_val(ml_entry);
-//    const char *verdict;
-//
-//    verdict = iptc_check_packet(c, e, h);
-//
-//    if (verdict == NULL)
-//        iptables_error(iptc_strerror(errno));
-//
-//    CAMLreturn(caml_copy_string(verdict));
-//}
-
 CAMLprim value
 caml_iptables_flush_entries(value ml_handle, value ml_chain)
 {
