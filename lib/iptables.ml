@@ -12,12 +12,12 @@ let _ =
   Callback.register_exception "Iptables.Iptables_error" (Iptables_error "")
 
 external init : string -> t = "caml_iptables_init"
-external free : string -> t = "caml_iptables_free"
+external free : t -> unit = "caml_iptables_free"
 external is_chain : t -> string -> bool = "caml_iptables_is_chain"
 external first_chain : t -> string option = "caml_iptables_first_chain"
 external next_chain : t -> string option = "caml_iptables_next_chain"
 external first_rule : t -> string -> entry option = "caml_iptables_first_rule"
-external next_rule : t -> string -> entry option = "caml_iptables_next_rule"
+external next_rule : t -> entry -> entry option = "caml_iptables_next_rule"
 external get_target : t -> entry -> string = "caml_iptables_get_target"
 external is_builtin : t -> string -> bool = "caml_iptables_builtin"
 external get_policy : t -> string -> string option = "caml_iptables_get_policy"
@@ -36,8 +36,6 @@ external delete_entry : t -> string -> entry -> unit
   = "caml_iptables_delete_entry"
 external delete_entry_by_number : t -> string -> int -> unit
   = "caml_iptables_delete_num_entry"
-(*external check_packet : t -> string -> entry -> string
-  = "caml_iptables_check_packet"*)
 external flush_entries : t -> string -> unit
   = "caml_iptables_flush_entries"
 external zero_entries : t -> string -> unit
@@ -62,11 +60,9 @@ external set_counters : t -> string -> int -> counters -> unit
 
 external commit : t -> unit = "caml_iptables_commit"
 
-(* external raw_socket : unit -> Unix.file_descr = "caml_iptables_get_raw_socket" *)
-
 external dump_entries : t -> unit = "caml_iptables_dump_entries"
 
-let iter_chains f ipt =
+let iter_chains ipt f =
   match first_chain ipt with
   | None ->
       ()
@@ -78,14 +74,39 @@ let iter_chains f ipt =
         | Some c -> iter c in
       iter c
 
-let iter_rules f chain ipt =
+let iter_rules ipt chain f =
   match first_rule ipt chain with
   | None ->
       ()
   | Some e ->
       let rec iter e =
         f e;
-        match next_rule ipt chain with
+        match next_rule ipt e with
         | None -> ()
-        | Some e -> iter e in
+        | Some next -> iter next in
       iter e
+
+external create_rule_stub :
+     Unix.inet_addr option -> Unix.inet_addr option -> string option
+  -> Unix.inet_addr option -> Unix.inet_addr option -> string option
+  -> string option -> string option -> string option -> string -> entry
+  = "caml_iptables_create_rule_byte" "caml_iptables_create_rule"
+
+let rule ?src ?src_mask ?src_port ?dst ?dst_mask ?dst_port
+         ?in_iface ?out_iface ?proto ~target () =
+  create_rule_stub
+    src src_mask src_port
+    dst dst_mask dst_port
+    in_iface out_iface
+    proto
+    target
+
+let with_chain chain f =
+  let ipt = init chain in
+  try
+    f ipt;
+    commit ipt;
+    free ipt
+  with e ->
+    free ipt;
+    raise e

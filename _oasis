@@ -15,7 +15,7 @@ Library "iptables"
   CompiledObject:  best
   Modules:         Iptables
   CSources:        iptables_stubs.c
-  CCLib:           -liptc
+  CCLib:           -lip4tc -lip6tc -liptc -lxtables
   CCOpt:           -Wall -Werror
 
 Document "iptables"
@@ -24,3 +24,12 @@ Document "iptables"
   BuildTools+:          ocamldoc
   XOCamlbuildPath:      lib
   XOCamlbuildLibraries: iptables
+
+Executable "test_iptables"
+  Path:            lib_test
+  MainIs:          test_iptables.ml
+  Install:         false
+  CompiledObject:  best
+  BuildDepends:    iptables,
+                   uint.uint64,
+                   unix

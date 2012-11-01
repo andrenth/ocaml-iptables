@@ -1,5 +1,5 @@
 (* OASIS_START *)
-(* DO NOT EDIT (digest: ccdacf963d98b19cd3ea7f8d76185d5c) *)
+(* DO NOT EDIT (digest: 5737c399482f6cc2580db5f560f95a89) *)
 module OASISGettext = struct
 # 21 "/home/andre/src/oasis-0.3.0/src/oasis/OASISGettext.ml"
 
@@ -487,16 +487,32 @@ let package_default =
                  S [A "-ccopt"; A "-Wall"; A "-ccopt"; A "-Werror"])
             ]);
           (["oasis_library_iptables_cclib"; "link"],
-            [(OASISExpr.EBool true, S [A "-cclib"; A "-liptc"])]);
+            [
+               (OASISExpr.EBool true,
+                 S
+                   [
+                      A "-cclib";
+                      A "-lip4tc";
+                      A "-cclib";
+                      A "-lip6tc";
+                      A "-cclib";
+                      A "-liptc";
+                      A "-cclib";
+                      A "-lxtables"
+                   ])
+            ]);
           (["oasis_library_iptables_cclib"; "ocamlmklib"; "c"],
-            [(OASISExpr.EBool true, S [A "-liptc"])])
+            [
+               (OASISExpr.EBool true,
+                 S [A "-lip4tc"; A "-lip6tc"; A "-liptc"; A "-lxtables"])
+            ])
        ];
-     includes = [];
+     includes = [("lib_test", ["lib"])];
      }
   ;;
 
 let dispatch_default = MyOCamlbuildBase.dispatch_default package_default;;
 
-# 501 "myocamlbuild.ml"
+# 517 "myocamlbuild.ml"
 (* OASIS_STOP *)
 Ocamlbuild_plugin.dispatch dispatch_default;;
